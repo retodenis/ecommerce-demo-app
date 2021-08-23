@@ -1,0 +1,19 @@
+<div [formGroup]="parentFormGroup" class="row">
+    <div class="col-md-2"><label>{{label}}</label></div>
+    <div class="col-md-9">
+        <div class="input-space">
+            
+            <div *ngIf="isDropDown">
+                <select formControlName="{{controlName}}" (change)="dropDownChangeEvent && dropDownChangeEvent()">
+                    <option *ngFor="let dropDown of dropDownData">
+                        {{dropDown.value}}
+                    </option>
+                </select>
+            </div>
+
+            <div *ngIf="!isDropDown">
+                <input formControlName="{{controlName}}" type="text">
+            </div>
+        </div>
+    </div>
+</div>
