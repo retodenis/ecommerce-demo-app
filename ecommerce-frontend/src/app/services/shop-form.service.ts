@@ -24,23 +24,23 @@ export class ShopFormService {
    * @param startMonth in range from 1 to 12
    * @returns months array from startMonth, for example if startMonth = 8, result is [8, 9, 10, 11, 12]
    */
-  generateCreditCardMonth(startMonth: number): Observable<DropDownValue<number>[]> {
+  generateCreditCardMonth(startMonth: number): Observable<DropDownValue<number, number>[]> {
     const MONTH_TO_GENERATE = 
       startMonth === ShopFormService.TOTAL_MONTHS ? 1 : ShopFormService.TOTAL_MONTHS - startMonth
-    const MONTHS: DropDownValue<number>[] = 
+    const MONTHS: DropDownValue<number, number>[] = 
       Array(MONTH_TO_GENERATE + 1).fill(0).map((k, v) => new DropDownValue(startMonth + v, v))
     return of(MONTHS)
   }
 
-  generateCreditCardYears(): Observable<DropDownValue<number>[]> {
-    const YEARS: DropDownValue<number>[] =
+  generateCreditCardYears(): Observable<DropDownValue<number, number>[]> {
+    const YEARS: DropDownValue<number, number>[] =
       Array(ShopFormService.YEARS_TO_GENERATE).fill(0).map((k, v) => new DropDownValue((ShopFormService.CURRENT_YEAR + v), v))
     return of(YEARS)
   }
 
   getCountries(): Observable<Country[]> {
     return this.httpClient.get<CountriesResponse>(this.countriesUrl).pipe(
-      map(response => response._embedded.countries)
+      map(response => <Country[]>response._embedded.countries)
     )
   }
 
@@ -49,6 +49,18 @@ export class ShopFormService {
       map(response => response._embedded.states)
     )
   }
+
+  // getStates(countryCode: string): Observable<State[]> {
+  //   return this.httpClient.get<StatesResponse>(`${this.statesUrl}/search/findByCountryCode?code=${countryCode}`).pipe(
+  //     map(response => {
+  //       const data: State[] = response._embedded.states
+  //       return data.map(s => ({
+  //         id: s.id,
+  //         name: s.name
+  //       }))
+  //     })
+  //   )
+  // }
 }
 
 interface StatesResponse {

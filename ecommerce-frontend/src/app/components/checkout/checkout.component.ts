@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Country } from 'src/app/common/country';
 import { DropDownValue } from 'src/app/common/drop-down-value';
+import { State } from 'src/app/common/state';
 import { CartService } from 'src/app/services/cart.service';
 import { ShopFormService } from 'src/app/services/shop-form.service';
 
@@ -22,31 +24,29 @@ export class CheckoutComponent implements OnInit {
   totalPrice: number = 0
   totalQuantity: number = 0
 
-  creditCardData: DropDownValue<string>[] = [new DropDownValue('Visa', 0), new DropDownValue('MasterCard', 1)]
-  expirationMonthData!: DropDownValue<number>[]
-  expirationYearData!: DropDownValue<number>[]
-  stateData: DropDownValue<string>[] = []
-  countryData: DropDownValue<string>[] = []
+  creditCardData: DropDownValue<string, string>[] = [new DropDownValue('Visa', 0), new DropDownValue('MasterCard', 1)]
+  expirationMonthData!: DropDownValue<number, number>[]
+  expirationYearData!: DropDownValue<number, number>[]
+  shippingStates: DropDownValue<State, string>[] = []
+  billingStates: DropDownValue<State, string>[] = []
+  countryData: DropDownValue<Country, string>[] = []
 
   constructor(private formBuilder: FormBuilder,
-              private cartService: CartService,
-              private shopFormService: ShopFormService) {
+    private cartService: CartService,
+    private shopFormService: ShopFormService) {
   }
 
-  ngOnInit(): void {   
+  ngOnInit(): void {
     this.createFormGroups()
     this.subscribeToTotals()
     this.subscribeYearsAndMonths()
 
     this.shopFormService.getCountries().subscribe(
-      data => data.forEach((c, i) => this.countryData.push(new DropDownValue(c.name, i)))
+      data => data.forEach((c, i) => this.countryData.push(new DropDownValue(c, i, true, c.name)))
     )
-    
-    this.logDropDown('expirationMonthData', this.expirationMonthData)
-    this.logDropDown('expirationYearData', this.expirationYearData)
   }
 
-  logDropDown(name: string, dropDownData: DropDownValue<any>[]) {
+  logDropDown(name: string, dropDownData: DropDownValue<any, any>[]) {
     console.log(`DropDownName=${name}`)
     dropDownData.forEach(e => {
       console.log(`DropDownValue=${e.value} and index=${e.index}`)
@@ -64,7 +64,7 @@ export class CheckoutComponent implements OnInit {
     this.shippingAddressFormGroup = this.formBuilder.group({
       street: [''],
       city: [''],
-      state: [''],
+      state: new FormControl(''),
       country: [''],
       zipCode: ['']
     })
@@ -97,15 +97,14 @@ export class CheckoutComponent implements OnInit {
   handleMonthsAndYears = () => {
     const creditCardFormGroup = this.checkoutFormGroup.get('creditCard')
     const selectedYear: number = +creditCardFormGroup?.value.expirationYear
-    
+
     let startMonth: number
-    if(ShopFormService.CURRENT_YEAR === selectedYear) {
+    if (ShopFormService.CURRENT_YEAR === selectedYear) {
       startMonth = CURRENT_MONTH
     } else {
       startMonth = 1
     }
     this.shopFormService.generateCreditCardMonth(startMonth).subscribe(data => this.expirationMonthData = data)
-    //console.log('handleMonthsAndYears called')
   }
 
   subscribeYearsAndMonths(): void {
@@ -114,7 +113,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   subscribeToTotals(): void {
-    this.cartService.totalPrice.subscribe(data => {this.totalPrice = data})
+    this.cartService.totalPrice.subscribe(data => { this.totalPrice = data })
     this.cartService.totalQuantity.subscribe(data => this.totalQuantity = data)
     this.cartService.computeCartTotals()
   }
@@ -123,15 +122,37 @@ export class CheckoutComponent implements OnInit {
     console.log('Handling the submit button')
     console.log(this.checkoutFormGroup.get('customer')?.value)
     console.log(`Credit card form data=${JSON.stringify(this.checkoutFormGroup.get('creditCard')?.value)}`)
+    console.log(`Shipping Address data=${JSON.stringify(this.checkoutFormGroup.get('shippingAddress')?.value)}`)
   }
 
   copyShipAddressToBillAddress(isBillingAddressTheSameChecked: boolean): void {
     console.log(`isBillingAddressTheSameChecked=${isBillingAddressTheSameChecked}`)
-    if(isBillingAddressTheSameChecked) {
+    if (isBillingAddressTheSameChecked) {
       this.checkoutFormGroup.controls.billingAddress
         .setValue(this.checkoutFormGroup.controls.shippingAddress.value)
+      
+      this.billingStates = this.shippingStates
     } else {
       this.checkoutFormGroup.controls.billingAddress.reset()
+      this.billingStates = []
     }
+  }
+
+  getShippingAddressStates = () => {
+    this.shippingStates = this.loadStatesData(this.shippingStates, this.shippingAddressFormGroup)
+  }
+
+  getBillingAddressStates = () => {
+    this.billingStates = this.loadStatesData(this.billingStates, this.billingAddressFormGroup)
+  }
+
+  private loadStatesData(states: DropDownValue<State, string>[], formGroup: FormGroup): DropDownValue<State, string>[] {
+    states = []
+    const countryCode = formGroup.value.country.code
+    this.shopFormService.getStates(countryCode).subscribe(data => {
+      data.forEach((s, i) => states.push(new DropDownValue(s, i, true, s.name)))
+      formGroup.get('state')?.setValue(states[0].value)
+    })
+    return states
   }
 }

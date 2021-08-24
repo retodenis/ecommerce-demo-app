@@ -7,12 +7,12 @@ import { DropDownValue } from 'src/app/common/drop-down-value';
   templateUrl: './form-row.component.html',
   styleUrls: ['./form-row.component.css']
 })
-export class FormRowComponent<T> implements OnInit {
+export class FormRowComponent<T, D> implements OnInit {
   @Input() parentFormGroup!: FormGroup
   @Input() label!: string
   @Input() controlName!: string
   @Input() isDropDown!: boolean
-  @Input() dropDownData!: DropDownValue<T>[]
+  @Input() dropDownData!: DropDownValue<T, D>[]
   @Input() hasChangeEvent!: boolean
   @Input() dropDownChangeEvent!: () => void
 

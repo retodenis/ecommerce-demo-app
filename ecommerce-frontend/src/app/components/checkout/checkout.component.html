@@ -2,65 +2,38 @@
     <div class="section-content section-content-p30">
         <div class="container-fluid">
             <form [formGroup]="checkoutFormGroup" (ngSubmit)="onSubmit()">
-                
+
                 <div formGroupName="customer" class="form-area">
                     <h3>Customer</h3>
-                    
-                    <app-form-row
-                        [parentFormGroup]="customerFormGroup"
-                        label="First Name"
-                        controlName="firstName"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="customerFormGroup"
-                        label="Last Name"
-                        controlName="lastName"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="customerFormGroup"
-                        label="Email"
-                        controlName="email"
-                    ></app-form-row>
+
+                    <app-form-row [parentFormGroup]="customerFormGroup" label="First Name" controlName="firstName">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="customerFormGroup" label="Last Name" controlName="lastName">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="customerFormGroup" label="Email" controlName="email">
+                    </app-form-row>
                 </div>
 
                 <div formGroupName="shippingAddress" class="form-area">
                     <h3>Shipping address</h3>
-                    
-                    <app-form-row
-                        [parentFormGroup]="shippingAddressFormGroup"
-                        label="Country"
-                        controlName="country"
-                        [isDropDown]=true
-                        [dropDownData]="countryData"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="shippingAddressFormGroup"
-                        label="Street"
-                        controlName="street"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="shippingAddressFormGroup"
-                        label="City"
-                        controlName="city"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="shippingAddressFormGroup"
-                        label="State"
-                        controlName="state"
-                        [isDropDown]=true
-                        [dropDownData]="stateData"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="shippingAddressFormGroup"
-                        label="Zip Code"
-                        controlName="zipCode"
-                    ></app-form-row>
+
+                    <app-form-row [parentFormGroup]="shippingAddressFormGroup" label="Country" controlName="country"
+                        [isDropDown]=true [dropDownData]="countryData" [dropDownChangeEvent]="getShippingAddressStates">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="shippingAddressFormGroup" label="Street" controlName="street">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="shippingAddressFormGroup" label="City" controlName="city">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="shippingAddressFormGroup" label="State" controlName="state"
+                        [isDropDown]=true [dropDownData]="shippingStates"></app-form-row>
+                    <app-form-row [parentFormGroup]="shippingAddressFormGroup" label="Zip Code" controlName="zipCode">
+                    </app-form-row>
                 </div>
 
                 <div class="input-space">
                     <label class="au-checkbox">
-                        <input #isBillingAddressTheSame
-                            type="checkbox" (change)="copyShipAddressToBillAddress(isBillingAddressTheSame.checked)">
+                        <input #isBillingAddressTheSame type="checkbox"
+                            (change)="copyShipAddressToBillAddress(isBillingAddressTheSame.checked)">
                         <span class="au-checkmark"></span>Billing Address same as Shipping Address
                     </label>
                 </div>
@@ -68,77 +41,36 @@
                 <div formGroupName="billingAddress" class="form-area">
                     <h3>Billing address</h3>
 
-                    <app-form-row
-                        [parentFormGroup]="billingAddressFormGroup"
-                        label="Country"
-                        controlName="country"
-                        [isDropDown]=true
-                        [dropDownData]="countryData"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="billingAddressFormGroup"
-                        label="Street"
-                        controlName="street"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="billingAddressFormGroup"
-                        label="City"
-                        controlName="city"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="billingAddressFormGroup"
-                        label="State"
-                        controlName="state"
-                        [isDropDown]=true
-                        [dropDownData]="stateData"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="billingAddressFormGroup"
-                        label="Zip Code"
-                        controlName="zipCode"
-                    ></app-form-row>
+                    <app-form-row [parentFormGroup]="billingAddressFormGroup" label="Country" controlName="country"
+                        [isDropDown]=true [dropDownData]="countryData" [dropDownChangeEvent]="getBillingAddressStates">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="billingAddressFormGroup" label="Street" controlName="street">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="billingAddressFormGroup" label="City" controlName="city">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="billingAddressFormGroup" label="State" controlName="state"
+                        [isDropDown]=true [dropDownData]="billingStates"></app-form-row>
+                    <app-form-row [parentFormGroup]="billingAddressFormGroup" label="Zip Code" controlName="zipCode">
+                    </app-form-row>
                 </div>
 
                 <div formGroupName="creditCard" class="form-area">
                     <h3>Credit Card</h3>
-                    
-                    <app-form-row
-                        [parentFormGroup]="creditCardFormGroup"
-                        label="Card Type"
-                        controlName="cardType"
-                        [isDropDown]=true
-                        [dropDownData]="creditCardData"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="creditCardFormGroup"
-                        label="Name on Card"
-                        controlName="nameOnCard"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="creditCardFormGroup"
-                        label="Card Number"
-                        controlName="cardNumber"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="creditCardFormGroup"
-                        label="Security Code"
-                        controlName="securityCode"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="creditCardFormGroup"
-                        label="Expiration Month"
-                        controlName="expirationMonth"
-                        [isDropDown]=true
-                        [dropDownData]="expirationMonthData"
-                    ></app-form-row>
-                    <app-form-row
-                        [parentFormGroup]="creditCardFormGroup"
-                        label="Expiration Year"
-                        controlName="expirationYear"
-                        [isDropDown]=true
-                        [dropDownData]="expirationYearData"
-                        [dropDownChangeEvent]="handleMonthsAndYears"
-                    ></app-form-row>
+
+                    <app-form-row [parentFormGroup]="creditCardFormGroup" label="Card Type" controlName="cardType"
+                        [isDropDown]=true [dropDownData]="creditCardData"></app-form-row>
+                    <app-form-row [parentFormGroup]="creditCardFormGroup" label="Name on Card" controlName="nameOnCard">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="creditCardFormGroup" label="Card Number" controlName="cardNumber">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="creditCardFormGroup" label="Security Code"
+                        controlName="securityCode"></app-form-row>
+                    <app-form-row [parentFormGroup]="creditCardFormGroup" label="Expiration Month"
+                        controlName="expirationMonth" [isDropDown]=true [dropDownData]="expirationMonthData">
+                    </app-form-row>
+                    <app-form-row [parentFormGroup]="creditCardFormGroup" label="Expiration Year"
+                        controlName="expirationYear" [isDropDown]=true [dropDownData]="expirationYearData"
+                        [dropDownChangeEvent]="handleMonthsAndYears"></app-form-row>
                 </div>
 
                 <div class="form-area">
@@ -152,6 +84,33 @@
                 </div>
 
             </form>
+            <!-- <form [formGroup]="shippingAddressFormGroup">
+                <div class="row">
+                    <div class="col-md-2"><label>Country</label></div>
+                    <div class="col-md-9">
+                        <div class="input-space">
+                            <select formControlName="country" (change)="getShippingAddressStates()">
+                                <option *ngFor="let country of countryData" [ngValue]="country">
+                                    {{country.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2"><label>State</label></div>
+                    <div class="col-md-9">
+                        <div class="input-space">
+                            <select formControlName="state">
+                                <option *ngFor="let state of shippingStates" [ngValue]="state">
+                                    {{state.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form> -->
         </div>
     </div>
 </div>
